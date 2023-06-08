@@ -1,2 +1,3 @@
-# SE project Cairo Metro
- This is a repo for Software Engineering Course Cairo Metro Website
+﻿# SE_starter_code
+ Run npm install to install all dependences 
+ npm start to run project

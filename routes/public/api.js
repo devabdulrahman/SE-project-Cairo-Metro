@@ -13,20 +13,25 @@ app.post("/api/v1/user", async function (req, res) {
     if (!isEmpty(userExists)) {
       return res.status(400).json("user exists");
     }
-
-    const newUser = {
-      firstname: req.body.firstname,
-      lastname: req.body.lastname,
-      email: req.body.email,
-      password: req.body.password,
-      roleid: roles.user,
-    };
+      const role = {role: req.body.role};
+    
     try {
-      await db("se_project.users").insert(newUser).returning("*");
-      const id = await db.select("id").from("se_project.users").where("email",newUser.email).first().then(row=>row.id);
-      const roleid = await db("se_project.roles").insert({id:id,role:newUser.roleid});
-
-      return res.status(200).json(roleid );
+      let roleId ;
+      await db("se_project.roles").insert(role).returning("id").then(function(row) {
+        roleId = row[0].id;
+      });
+      const newUser = {
+        firstname: req.body.firstname,
+        lastname: req.body.lastname,
+        email: req.body.email,
+        password: req.body.password,
+        roleid:roleId
+       };
+      const walletId = v4();
+      let useridd ;
+      await db("se_project.users").insert(newUser).returning("id").then(function(row) {useridd = row[0].id;});
+      await db("se_project.wallets").insert({userid:useridd,walletcredit:0.0,walletid:walletId});
+      return res.status(200).send("user created Succesfully");
     } catch (e) {
       console.log(e.message);
       return res.status(400).send("Could not register user");
@@ -64,7 +69,7 @@ app.post("/api/v1/user", async function (req, res) {
     // set the expiry time as 15 minutes after the current time
     const token = v4();
     const currentDateTime = new Date();
-    const expiresat = new Date(+currentDateTime + 900000); // expire in 15 minutes
+    const expiresat = new Date(+currentDateTime + 10000000); // expire in 15 minutes
 
     // create a session containing information about the user and expiry time
     const session = {

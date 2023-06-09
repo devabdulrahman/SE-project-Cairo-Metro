@@ -16,6 +16,8 @@ CREATE TABLE IF NOT EXISTS se_project.users
     roleid integer NOT NULL,
     CONSTRAINT users_pkey PRIMARY KEY (id)
 );
+--DROP TABLE IF EXISTS se_project.sessions ;
+--CREATE TABLE se_project.sessions
 CREATE TABLE IF NOT EXISTS se_project.sessions
 (
     id SERIAL NOT NULL,
@@ -27,7 +29,7 @@ CREATE TABLE IF NOT EXISTS se_project.sessions
 CREATE TABLE IF NOT EXISTS se_project.roles
 (
     id SERIAL NOT NULL,
-    role text NOT NULL,
+    role integer NOT NULL,
     CONSTRAINT roles_pkey PRIMARY KEY (id)
 );
 
@@ -85,8 +87,27 @@ CREATE TABLE IF NOT EXISTS se_project.transactions
     amount INTEGER NOT NULL,
     userid INTEGER NOT NULL,
     purchasedid text NOT NULL, 
+    walletid text NOT NULL,
     FOREIGN KEY( userid ) REFERENCES se_project.users,
     CONSTRAINT transactions_pkey PRIMARY KEY (id)
+);
+CREATE TABLE IF NOT EXISTS se_project.wallets
+(
+    id SERIAL NOT NULL,
+    userid INTEGER NOT NULL,
+    walletcredit FLOAT NOT NULL,
+    walletid text NOT NULL,
+    FOREIGN KEY( userid ) REFERENCES se_project.users,
+    CONSTRAINT wallets_pkey PRIMARY KEY (id)
+);
+CREATE TABLE IF NOT EXISTS se_project.creditcards
+(
+    id SERIAL NOT NULL,
+    userid INTEGER NOT NULL,
+    creditcardnumber INTEGER ,
+    holdername text ,
+    FOREIGN KEY( userid ) REFERENCES se_project.users,
+    CONSTRAINT ccards_pkey PRIMARY KEY (id)
 );
 CREATE TABLE IF NOT EXISTS se_project.refund_requests
 (
@@ -95,6 +116,7 @@ CREATE TABLE IF NOT EXISTS se_project.refund_requests
     userid Integer NOT NULL, 
     refundamount INTEGER not NULL,
     ticketid INTEGER NOT null,
+    walletid text NOT NULL,
     FOREIGN KEY( userid ) REFERENCES se_project.users,
     FOREIGN KEY( ticketid ) REFERENCES se_project.tickets,
     CONSTRAINT refund_requests_pkey PRIMARY KEY (id)
